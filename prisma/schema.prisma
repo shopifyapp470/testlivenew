@@ -33,6 +33,43 @@ model Session {
   refreshTokenExpires DateTime?
 }
 
+
+model Rewardpoint {
+  id            String         @id @default(cuid())
+  customerid    String
+  pointvalue    Int
+  pendingpoint  Int      @default(0)
+  activepoint   Int      @default(0)
+  store         String
+  customeremail String
+  dob           DateTime?
+  anniversaryDate DateTime?
+  lastBirthdayRewardYear Int?
+  lastAnniversaryRewardYear Int?
+  birthdayPoint             Int      @default(0) 
+  anniversaryPoint          Int      @default(0)
+  orders        OrderHistory[]
+}
+
+model OrderHistory {
+  id          String  @id @default(cuid())
+  orderId     String  @unique // शॉपिफाई की ऑर्डर आईडी (जैसे: "gid://shopify/Order/12345")
+  
+  orderNumber String? // पढ़ने में आसान ऑर्डर नंबर (जैसे: "#1001")
+  status       String   @default("PENDING") // Values: "PENDING" or "PROCESSED"
+  discountAmount Float // कितना डिस्काउंट मिला
+  couponCode     String? // कौन सा कूपन कोड यूज़ हुआ (अगर कोई हो)
+  pointsEarned   Int // इस ऑर्डर से कितने पॉइंट्स मिले
+  pointsRedeemed Int // इस ऑर्डर में कितने पॉइंट्स यूज़ किए गए
+  pointsRevert   Int      @default(0)
+  highRewardPoint Int        @default(0)
+  subtotal       Float    @default(0.0)
+  productNames   String?
+  createdAt     DateTime    @default(now())
+  rewardPointId String
+  rewardPoint   Rewardpoint @relation(fields: [rewardPointId], references: [id])
+}
+
 // ✅ Table name: userbirthday
 model userbirthday {
   id            String   @id @default(uuid())
